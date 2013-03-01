@@ -1,5 +1,5 @@
 #######################################
-# Syntax Coloring Map For ARMtimer
+# Syntax Coloring Map For DueTimer
 #######################################
 
 #######################################
@@ -10,8 +10,24 @@
 # Methods and Functions (KEYWORD2)
 #######################################
 
-startTimer	KEYWORD2
-stopTimer	KEYWORD2
+startTimer1	KEYWORD2
+startTimer2	KEYWORD2
+startTimer3	KEYWORD2
+startTimer4	KEYWORD2
+startTimer5	KEYWORD2
+startTimer6	KEYWORD2
+startTimer7	KEYWORD2
+startTimer8	KEYWORD2
+startTimer9	KEYWORD2
+stopTimer1	KEYWORD2
+stopTimer2	KEYWORD2
+stopTimer3	KEYWORD2
+stopTimer4	KEYWORD2
+stopTimer5	KEYWORD2
+stopTimer6	KEYWORD2
+stopTimer7	KEYWORD2
+stopTimer8	KEYWORD2
+stopTimer9	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
