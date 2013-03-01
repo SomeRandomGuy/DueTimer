@@ -21,7 +21,7 @@ volatile void (*TC7_function)();
 volatile void (*TC8_function)();
 
 /*
- * As demonstrated by RCArduino:
+ * As demonstrated by RCArduino and modified by BKM:
  * pick clock that provides the least error for specified frequency.
  */
 uint8_t pickClock(uint32_t frequency, uint32_t& retRC)
@@ -33,42 +33,43 @@ uint8_t pickClock(uint32_t frequency, uint32_t& retRC)
 	    TIMER_CLOCK3	MCK/32
 	    TIMER_CLOCK4	MCK/128
 	*/
-	struct 
-	{
+	struct {
 		uint8_t flag;
 		uint8_t divisor;
-	} 
-	clockConfig[] = {
+	} clockConfig[] = {
 		{ TC_CMR_TCCLKS_TIMER_CLOCK1, 2 },
 		{ TC_CMR_TCCLKS_TIMER_CLOCK2, 8 },
 		{ TC_CMR_TCCLKS_TIMER_CLOCK3, 32 },
 		{ TC_CMR_TCCLKS_TIMER_CLOCK4, 128 }
 	};
+	float ticks;
+	float error;
 	int clkId = 3;
 	int bestClock = 3;
 	float bestError = 1.0;
 	do 
 	{
-		float ticks = (float) VARIANT_MCK / (float) frequency / (float) clockConfig[clkId].divisor;
-		float error = abs(ticks - round(ticks));
+		ticks = (float) VARIANT_MCK / (float) frequency / (float) clockConfig[clkId].divisor;
+		error = abs(ticks - round(ticks));
 		if (abs(error) < bestError) 
 		{
 			bestClock = clkId;
 			bestError = error;
 		}
 	} while (clkId-- > 0);
-	float ticks = (float) VARIANT_MCK / (float) frequency / (float) clockConfig[bestClock].divisor;
+	ticks = (float) VARIANT_MCK / (float) frequency / (float) clockConfig[bestClock].divisor;
 	retRC = (uint32_t) round(ticks);
 	return clockConfig[bestClock].flag;
 }
 
 
 void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
-{
+{	
+    uint32_t rc = 0;
+	uint8_t clock;
 	pmc_set_writeprotect(false);
 	pmc_enable_periph_clk((uint32_t)irq);
-	uint32_t rc = 0;
-	uint8_t clock = pickClock(frequency, rc);
+	clock = pickClock(frequency, rc);
 	
 	TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | clock);
 	TC_SetRA(tc, channel, rc/2); //50% high, 50% low
